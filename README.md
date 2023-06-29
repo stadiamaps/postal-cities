@@ -21,16 +21,19 @@ In order to solve this problem, we will source all the locality names associated
 
 ## Data extraction workflow
 
-The scripts are designed to be used on a full-planet build but will work just as well for a smaller extract, running the planet build can take some time, if it's your first time try a smaller extract first.
+The scripts are designed to be used on a full-planet build but will work just as well for a smaller extract, running the planet build can take some time, if it's your first time try a smaller extract first. 
 
 The expected input format for these scripts is a 4-column TSV file (without a header line).
 The four columns are (in left-to-right order): Postcode, City Name, Longitude, Latitude.
+
+A full import script that imports both OSM and OA records is located in [scripts/import.sh](scripts/import.sh).
+The rest of this section will break down the extraction process.
 
 ### Extract the relevant data from OpenStreetMap
 
 Firstly we need to extract some fields from OSM, we only really need two fields: `addr:postcode` and `addr:city`, we will additionally extract the lat/lon coordinates of the OSM entity in order to determine which county it belongs to, and also to prevent associating a locality very far away from the OSM entity.
 
-The easiest way to do this is using [pbf2json](https://github.com/pelias/pbf2json), there is an example script `./scripts/pbf2json.sh`.
+The easiest way to do this is using [pbf2json](https://github.com/pelias/pbf2json).
 
 The `pbf2json` script should output JSON lines, each line contains one OSM entity which has the properties we are looking for.
 
@@ -48,7 +51,7 @@ You can then convert the JSON to the 4-column TSV format by piping the data to:
 
 ### Extract the relevant data from OpenAddresses
 
-The following command will work recursively on a directory of nested CSV files downloaded from http://results.openaddresses.io/
+The following command will work recursively on a directory of nested CSV files downloaded from [OpenAddresses](https://batch.openaddresses.io/data).
 
 You will need to download and unzip the data yourself before continuing. The `$OA_PATH` variable should point to a directory which should be searched recursively for CSV files.
 

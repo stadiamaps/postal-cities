@@ -10,7 +10,7 @@ const withinUSA = (row) => {
     }
   }
   return false;
-}
+};
 
 function streamFactory(db){
 
@@ -81,7 +81,7 @@ function streamFactory(db){
           count DESC;
     `);
     done();
-  }
+  };
 
   return through.obj(transform, flush);
 }

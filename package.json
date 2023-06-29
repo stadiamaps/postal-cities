@@ -8,6 +8,7 @@
   "license": "MIT",
   "main": "import.js",
   "scripts": {
+    "import": "scripts/import.sh",
     "test": "./scripts/units"
   },
   "repository": {

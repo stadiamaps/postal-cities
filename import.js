@@ -7,7 +7,9 @@ const lookup = require('./src/placeholderLookup');
 
 // delete data if one already exists with the same name
 const dbfile = process.env.DB_FILENAME || 'lastline.db';
-fs.existsSync(dbfile) && fs.unlinkSync(dbfile)
+if (fs.existsSync(dbfile)) {
+  fs.unlinkSync(dbfile);
+}
 
 // connect and setup database
 const db = new Sqlite3(dbfile);

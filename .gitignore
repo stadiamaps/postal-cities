@@ -4,4 +4,6 @@ data
 *.db
 *.jsonl
 scripts/*.pbf
-scripts/pbf2json.darwin-x64
+pbf2json.*
+.idea/
+lastline.*
