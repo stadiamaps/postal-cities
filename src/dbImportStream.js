@@ -61,6 +61,18 @@ function streamFactory(db){
   // ensure that SQLite has enough tmp space
   // export SQLITE_TMPDIR=/large/directory
   const flush = (done) => {
+    // TODO: This needs to be rewritten.
+    // Rewrite this with st_dbscan or something from PostGIS; this implementation is vulnerable to outliers.
+    // In SQLite, there is no enforcement that every column selected appears in GROUP BY. For every expression in a
+    // query containing a GROUP BY that doesn't involve an aggregate expression, an arbitrary value will be selected.
+    // The original implementation of this used just `lon` and `lat`, meaning that arbitrary values would be selected,
+    // leading to completely nonsensical results in the presence of bad data.
+    //
+    // Using what basically amounts to a centroid by averaging the columns is a band-aid.
+    //
+    // I'm also not quite sold on the trim business. I don't know if the output is logical. As far as I can tell,
+    // if a city name contains a comma, it trims the string to only return everything AFTER the comma, and I don't
+    // understand why.
     db.exec(`
       PRAGMA TEMP_STORE=FILE;
       INSERT INTO aggregate
@@ -68,8 +80,8 @@ function streamFactory(db){
           COUNT(*) AS count,
           TRIM(postcode) as postcode,
           TRIM(TRIM(SUBSTR(city, INSTR(city,',')),',')) as city,
-          lon,
-          lat
+          AVG(lon),
+          AVG(lat)
       FROM lastline
       WHERE TRIM(postcode) != ''
       AND TRIM(city) != ''

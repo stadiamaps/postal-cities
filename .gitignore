@@ -7,3 +7,4 @@ scripts/*.pbf
 pbf2json.*
 .idea/
 lastline.*
+country/
