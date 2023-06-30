@@ -72,14 +72,14 @@ function selectLocality(row, err, res){
 
     // no candidates found
     if( !candidates.length ){
-      return { err: 'no candidates found', match: match }
+      return { err: 'no candidates found', match: match };
     }
 
     // sort candidates by nearest match first
     candidates.sort((a, b) => a.km - b.km);
 
     // print TSV
-    return { candidates: candidates }
+    return { candidates: candidates };
 }
 
 module.exports = selectLocality;
