@@ -37,6 +37,19 @@ function streamFactory(db){
     PRAGMA TEMP_STORE=MEMORY;
   `);
 
+  // Custom Median Function
+  db.aggregate('median', {
+    start: () => [],
+    step: (array, nextValue) => {
+      array.push(nextValue);
+    },
+    result: (array) => {
+      array.sort((a, b) => a - b);
+      const mid = Math.floor(array.length / 2);
+      return (array.length % 2 !== 0) ? array[mid] : (array[mid - 1] + array[mid]) / 2;
+    }
+  });
+
   // prepare insert statement
   const stmt = db.prepare(`
     INSERT INTO lastline (postcode, city, lon, lat)
@@ -62,15 +75,14 @@ function streamFactory(db){
   // export SQLITE_TMPDIR=/large/directory
   const flush = (done) => {
     // TODO: This needs to be rewritten.
-    // Rewrite this with st_dbscan or something from PostGIS; this implementation is vulnerable to outliers.
     // In SQLite, there is no enforcement that every column selected appears in GROUP BY. For every expression in a
     // query containing a GROUP BY that doesn't involve an aggregate expression, an arbitrary value will be selected.
     // The original implementation of this used just `lon` and `lat`, meaning that arbitrary values would be selected,
     // leading to completely nonsensical results in the presence of bad data.
     //
-    // Using what basically amounts to a centroid by averaging the columns is a band-aid.
+    // This attempts to avoid that by using a median aggregate, which should ignore outliers.
     //
-    // I'm also not quite sold on the trim business. I don't know if the output is logical. As far as I can tell,
+    // I'm also not quite sold on the trim business. As far as I can tell,
     // if a city name contains a comma, it trims the string to only return everything AFTER the comma, and I don't
     // understand why.
     db.exec(`
@@ -80,8 +92,8 @@ function streamFactory(db){
           COUNT(*) AS count,
           TRIM(postcode) as postcode,
           TRIM(TRIM(SUBSTR(city, INSTR(city,',')),',')) as city,
-          AVG(lon),
-          AVG(lat)
+          median(lon),
+          median(lat)
       FROM lastline
       WHERE TRIM(postcode) != ''
       AND TRIM(city) != ''
