@@ -25,7 +25,9 @@ function streamFactory(){
         // Add city with mz:postal_locality here if it exists.
         // TODO: I'm not quite sure what the best solution is to be honest, but the coordinate selection for large areas is a problem.
         // Adding postal code coords from WOF can mess with the original address data. These probably should be
-        // location-less strings (or heck, even postcode entries would work), not full localities
+        // location-less strings (or heck, even postcode entries would work), not full localities.
+        //
+        // An example problematic postal code is 99701.
         const primary = {
           postcode: postalCode,
           city: result.postal_locality,
