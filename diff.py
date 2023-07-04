@@ -11,7 +11,7 @@ def read_file(file_path):
             postal_code, record_id, name, _, _, weight = line.strip().split('\t')
             if postal_code not in data:
                 data[postal_code] = []
-            data[postal_code].append((record_id, name, weight))
+            data[postal_code].append((record_id, name, int(weight)))
     return data
 
 def compare_files(old_file, new_file):
@@ -42,6 +42,8 @@ def compare_files(old_file, new_file):
             elif new_first_record and not old_first_record:
                 pass  # no action
             if old_first_record[0] != new_first_record[0] or old_first_record[1].lower() != new_first_record[1].lower():
+                if old_first_record[2] <= 3 and new_first_record[2] <= 3:
+                    continue
                 if old_first_record[1].lower() == new_first_record[1].lower():
                     changed_ids += 1
                     change_type = "ID"
@@ -49,7 +51,7 @@ def compare_files(old_file, new_file):
                 else:
                     changed_names += 1
 
-                    print(f'Postal code: {postal_code} changed name {old_first_record[1]} -> {new_first_record[1]}')
+                    print(f'Postal code: {postal_code} changed name {old_first_record[1]} ({old_first_record[0]}) -> {new_first_record[1]} ({new_first_record[0]})')
                     print('Old records:')
                     print_records(old_records)
 

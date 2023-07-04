@@ -29,7 +29,7 @@ function placeholder(row){
                 JSON.stringify( row )
             )}
             console.log([
-                row.count, row.postcode, row.city,
+                row.weight, row.postcode, row.city,
                 locality.candidates[0].wofid,
                 locality.candidates[0].name_english,
                 locality.candidates[0].name_abbr,

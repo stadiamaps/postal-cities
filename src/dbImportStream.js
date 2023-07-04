@@ -20,10 +20,11 @@ function streamFactory(db){
       postcode TEXT NOT NULL,
       city TEXT NOT NULL,
       lon REAL NOT NULL,
-      lat REAL NOT NULL
+      lat REAL NOT NULL,
+      weight INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS aggregate (
-      count INTEGER NOT NULL,
+      weight INTEGER NOT NULL,
       postcode TEXT NOT NULL,
       city TEXT NOT NULL,
       lon REAL NOT NULL,
@@ -52,8 +53,8 @@ function streamFactory(db){
 
   // prepare insert statement
   const stmt = db.prepare(`
-    INSERT INTO lastline (postcode, city, lon, lat)
-    VALUES ($postcode, $city, $lon, $lat);
+    INSERT INTO lastline (postcode, city, lon, lat, weight)
+    VALUES ($postcode, $city, $lon, $lat, $weight);
   `);
 
   // insert a row in the database per row of the TSV file
@@ -89,7 +90,7 @@ function streamFactory(db){
       PRAGMA TEMP_STORE=FILE;
       INSERT INTO aggregate
       SELECT
-          COUNT(*) AS count,
+          SUM(weight) AS weight,
           TRIM(postcode) as postcode,
           TRIM(TRIM(SUBSTR(city, INSTR(city,',')),',')) as city,
           median(lon),
@@ -102,7 +103,7 @@ function streamFactory(db){
           UPPER(TRIM(TRIM(SUBSTR(city, INSTR(city,',')),',')))
       ORDER BY
           postcode ASC,
-          count DESC;
+          weight DESC;
     `);
     done();
   };
