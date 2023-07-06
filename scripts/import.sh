@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e  # Abort if any command exits with a nonzero status
 set -u  # Abort if an unset variable is referenced
 
