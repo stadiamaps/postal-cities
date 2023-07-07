@@ -81,7 +81,11 @@ function streamFactory(db){
     // The original implementation of this used just `lon` and `lat`, meaning that arbitrary values would be selected,
     // leading to completely nonsensical results in the presence of bad data.
     //
-    // This attempts to avoid that by using a median aggregate, which should ignore outliers.
+    // This attempts to avoid that by using a median aggregate, which should ignore outliers. HOWEVER......
+    // TODO: This doesn't account for the fact that multiple countries use similar postal code formats, so
+    // what we really need here is some sort of grouping by clusters, because two postal codes may be half a
+    // world away from each other! For example, 33028 appears in the US, Lithuania, Germany, and Italy.
+    // These are NOT the same!
     //
     // I'm also not quite sold on the trim business. As far as I can tell,
     // if a city name contains a comma, it trims the string to only return everything AFTER the comma, and I don't

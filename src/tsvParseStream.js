@@ -33,7 +33,7 @@ function streamFactory(){
           city: result.postal_locality,
           lon: result.lon,
           lat: result.lat,
-          weight: num_alts + 2
+          weight: num_alts + 3
         };
 
         this.push(primary);
